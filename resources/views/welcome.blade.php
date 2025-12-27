@@ -7,6 +7,7 @@
     <title>Sandeepa Muthumal - Full-Stack Software Engineer | Laravel, React, Node.js Specialist</title>
     <meta name="description"
         content="Full-stack software engineer with 2+ years building production systems. Specializing in Laravel, React, Node.js, and scalable backend architecture.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
@@ -132,11 +133,11 @@
                             data-tooltip="LinkedIn">
                             <i class="fab fa-linkedin"></i>
                         </a>
-                        <a href="https://github.com/sandeepa" target="_blank" class="social-icon"
+                        <a href="https://github.com/sandeepamuthumal" target="_blank" class="social-icon"
                             data-tooltip="GitHub">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:sandeepa@example.com" class="social-icon" data-tooltip="Email">
+                        <a href="mailto:sandeepamuthumal3@gmail.com" class="social-icon" data-tooltip="Email">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -279,7 +280,7 @@
                             </li>
                             <li class="flex items-start gap-2">
                                 <i class="fas fa-check text-blue-400 mt-1 flex-shrink-0"></i>
-                                <span>Ownership mentality — I don't just complete tasks, I solve problems</span>
+                                <span>Ownership mentality - I don't just complete tasks, I solve problems</span>
                             </li>
                         </ul>
                     </div>
@@ -421,285 +422,175 @@
                 </button>
             </div>
 
+            @php
+                $statusMap = [
+                    'completed' => ['class' => 'status-completed', 'label' => 'Completed', 'icon' => 'fa-check-circle'],
+                    'ongoing' => ['class' => 'status-ongoing', 'label' => 'Ongoing', 'icon' => 'fa-spinner'],
+                    'modifying' => ['class' => 'status-modifying', 'label' => 'Modifying', 'icon' => 'fa-wrench'],
+                ];
+            @endphp
+
+
             <!-- Personal Projects Tab Content -->
             <div id="content-personal" class="tab-content">
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Project Card Template - Consistent Structure -->
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&h=600&fit=crop"
-                                alt="CrickBash" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <!-- Header -->
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">CrickBash</h3>
-                                    <p class="text-sm text-slate-400">Cricket Information Platform</p>
+                    @foreach ($personal_projects as $project)
+                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
+
+                            <!-- Image -->
+                            <div class="project-card-image">
+                                <img src="{{ asset($project->primary_image) }}" alt="{{ $project->title }}"
+                                    loading="lazy">
+                            </div>
+
+                            <div class="p-6">
+
+                                <!-- Header -->
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-white mb-1">
+                                            {{ $project->title }}
+                                        </h3>
+                                        <p class="text-sm text-slate-400">
+                                            {{ $project->subtitle }}
+                                        </p>
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <span class="status-badge {{ $statusMap[$project->status]['class'] }}">
+                                        <i class="fas {{ $statusMap[$project->status]['icon'] }}"></i>
+                                        {{ $statusMap[$project->status]['label'] }}
+                                    </span>
                                 </div>
-                                <span class="status-badge status-live">
-                                    <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Live
-                                </span>
-                            </div>
 
-                            <!-- Description -->
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Comprehensive cricket platform with live scores, tournament management, and
-                                streaming-optimized interfaces for broadcasts.
-                            </p>
+                                <!-- Description -->
+                                <p class="text-slate-400 text-sm mb-4 line-clamp-2">
+                                    {!! strip_tags($project->description) !!}
+                                </p>
 
-                            <!-- Project Type -->
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Personal Project</span>
-                            </div>
-
-                            <!-- Skills Tags -->
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Laravel</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Livewire</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">MySQL</span>
-                            </div>
-
-                            <!-- Metrics & Actions -->
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-users mr-1"></i> 500+ Users
-                                </span>
-                                <div class="flex gap-2">
-                                    <a href="#" class="text-blue-400 hover:text-blue-300 transition">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                    <a href="#" class="text-blue-400 hover:text-blue-300 transition">
-                                        <i class="fab fa-github"></i>
-                                    </a>
+                                <!-- Project Type -->
+                                <div class="mb-3">
+                                    <span class="text-xs text-slate-500 font-mono">
+                                        Personal Project
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- More Personal Projects -->
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in"
-                        data-aos-delay="100">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop"
-                                alt="CleanFlow" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">CleanFlow Pro</h3>
-                                    <p class="text-sm text-slate-400">Business Management System</p>
+                                <!-- Technologies -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    @foreach (explode(',', $project->technologies) as $tech)
+                                        <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">
+                                            {{ trim($tech) }}
+                                        </span>
+                                    @endforeach
                                 </div>
-                                <span class="status-badge status-live">
-                                    <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Live
-                                </span>
-                            </div>
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Complete business management system with client management, staff scheduling, and
-                                automated PDF document generation.
-                            </p>
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Personal Project</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Laravel</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">dompdf</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Redis</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-building mr-1"></i> 50+ Clients
-                                </span>
-                                <div class="flex gap-2">
-                                    <a href="#" class="text-blue-400 hover:text-blue-300 transition">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
+
+                                <!-- Actions -->
+                                <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+                                    <span class="text-slate-400 text-sm">
+                                        <i class="fas fa-code mr-1"></i> Personal
+                                    </span>
+
+                                    <div class="flex gap-2">
+                                        @if ($project->live_link)
+                                            <a href="{{ $project->live_link }}" target="_blank"
+                                                class="text-blue-400 hover:text-blue-300">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        @endif
+
+                                        @if ($project->github_link)
+                                            <a href="{{ $project->github_link }}" target="_blank"
+                                                class="text-blue-400 hover:text-blue-300">
+                                                <i class="fab fa-github"></i>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in"
-                        data-aos-delay="200">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop"
-                                alt="ExpenseTracker" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">ExpenseTracker</h3>
-                                    <p class="text-sm text-slate-400">Mobile Expense Management</p>
-                                </div>
-                                <span class="status-badge status-development">
-                                    <i class="fas fa-clock mr-1" style="font-size: 8px;"></i>In Development
-                                </span>
-                            </div>
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Mobile expense management with offline support, receipt uploads, and real-time approval
-                                tracking.
-                            </p>
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Personal Project</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Flutter</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Provider</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Node.js</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-mobile-alt mr-1"></i> iOS/Android
-                                </span>
-                                <div class="flex gap-2">
-                                    <a href="#" class="text-blue-400 hover:text-blue-300 transition">
-                                        <i class="fab fa-github"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
+
 
             <!-- Company Projects Tab Content -->
             <div id="content-company" class="tab-content hidden">
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Company Project Cards (Same Structure) -->
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1557821552-17105176677c?w=800&h=600&fit=crop"
-                                alt="E-commerce" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">ShopMaster</h3>
-                                    <p class="text-sm text-slate-400">E-commerce Platform</p>
-                                </div>
-                                <span class="status-badge status-live">
-                                    <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Live
-                                </span>
-                            </div>
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Complete e-commerce solution with payment gateway integration, inventory management, and
-                                analytics dashboard.
-                            </p>
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Company Project - SCITS</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Laravel</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">React</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Stripe</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-shopping-cart mr-1"></i> 1000+ Orders
-                                </span>
-                                <div class="flex gap-2">
-                                    <span class="text-slate-600"><i class="fas fa-lock"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @foreach ($company_projects as $project)
+                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
 
-                    <!-- More company projects... -->
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in"
-                        data-aos-delay="100">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop"
-                                alt="Analytics" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">DataViz Pro</h3>
-                                    <p class="text-sm text-slate-400">Analytics Dashboard</p>
-                                </div>
-                                <span class="status-badge status-live">
-                                    <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Live
-                                </span>
+                            <!-- Image -->
+                            <div class="project-card-image">
+                                <img src="{{ asset($project->primary_image) }}" alt="{{ $project->title }}"
+                                    loading="lazy">
                             </div>
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Real-time analytics dashboard with custom charts, KPI tracking, and automated report
-                                generation for business intelligence.
-                            </p>
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Company Project - SCITS</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">React</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Node.js</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">MongoDB</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-chart-line mr-1"></i> Real-time
-                                </span>
-                                <div class="flex gap-2">
-                                    <span class="text-slate-600"><i class="fas fa-lock"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in"
-                        data-aos-delay="200">
-                        <div class="project-card-image">
-                            <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&h=600&fit=crop"
-                                alt="HR" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-1">HRConnect</h3>
-                                    <p class="text-sm text-slate-400">HR Management Portal</p>
+                            <div class="p-6">
+
+                                <!-- Header -->
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-white mb-1">
+                                            {{ $project->title }}
+                                        </h3>
+                                        <p class="text-sm text-slate-400">
+                                            {{ $project->subtitle }}
+                                        </p>
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <span class="status-badge {{ $statusMap[$project->status]['class'] }}">
+                                        <i class="fas {{ $statusMap[$project->status]['icon'] }}"></i>
+                                        {{ $statusMap[$project->status]['label'] }}
+                                    </span>
                                 </div>
-                                <span class="status-badge status-live">
-                                    <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>Live
-                                </span>
-                            </div>
-                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                Full HR management platform with leave tracking, payroll integration, and employee
-                                self-service capabilities.
-                            </p>
-                            <div class="mb-3">
-                                <span class="text-xs text-slate-500 font-mono">Company Project - SCITS</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Laravel</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">Livewire</span>
-                                <span
-                                    class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">MySQL</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-slate-400 text-sm">
-                                    <i class="fas fa-users-cog mr-1"></i> 200+ Employees
-                                </span>
-                                <div class="flex gap-2">
-                                    <span class="text-slate-600"><i class="fas fa-lock"></i></span>
+
+                                <!-- Description -->
+                                <p class="text-slate-400 text-sm mb-4 line-clamp-2">
+                                    {!! strip_tags($project->description) !!}
+                                </p>
+
+                                <!-- Project Type -->
+                                <div class="mb-3">
+                                    <span class="text-xs text-slate-500 font-mono">
+                                        Personal Project
+                                    </span>
+                                </div>
+
+                                <!-- Technologies -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    @foreach (explode(',', $project->technologies) as $tech)
+                                        <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">
+                                            {{ trim($tech) }}
+                                        </span>
+                                    @endforeach
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+                                    <span class="text-slate-400 text-sm">
+                                        <i class="fas fa-code mr-1"></i> Company
+                                    </span>
+
+                                    <div class="flex gap-2">
+                                        @if ($project->live_link)
+                                            <a href="{{ $project->live_link }}" target="_blank"
+                                                class="text-blue-400 hover:text-blue-300">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        @endif
+
+                                        @if ($project->github_link)
+                                            <a href="{{ $project->github_link }}" target="_blank"
+                                                class="text-blue-400 hover:text-blue-300">
+                                                <i class="fab fa-github"></i>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -770,7 +661,7 @@
                     <div class="glass-card rounded-xl p-6 hover-lift">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
-                            <span class="text-blue-400 font-mono text-sm">2021 - Present</span>
+                            <span class="text-blue-400 font-mono text-sm">2023 - Present</span>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2">BICT (Hons) Undergraduate</h3>
                         <h4 class="text-blue-400 font-semibold mb-4">University • Sri Lanka</h4>
@@ -849,7 +740,7 @@
                             AW
                         </div>
                         <div>
-                            <h4 class="font-bold text-white">Ashan Wijayarathna</h4>
+                            <h4 class="font-bold text-white">Thilina Hewage</h4>
                             <p class="text-slate-400 text-sm">Tech Lead, SCITS</p>
                         </div>
                     </div>
@@ -874,7 +765,7 @@
                             KP
                         </div>
                         <div>
-                            <h4 class="font-bold text-white">Kamal Perera</h4>
+                            <h4 class="font-bold text-white">Shevon</h4>
                             <p class="text-slate-400 text-sm">Client, Cleaning Services</p>
                         </div>
                     </div>
@@ -899,7 +790,7 @@
                             NS
                         </div>
                         <div>
-                            <h4 class="font-bold text-white">Nimal Silva</h4>
+                            <h4 class="font-bold text-white">Kavindu </h4>
                             <p class="text-slate-400 text-sm">Junior Developer, SCITS</p>
                         </div>
                     </div>
@@ -947,9 +838,9 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-400 text-sm">Email</p>
-                                    <a href="mailto:sandeepa@example.com"
+                                    <a href="mailto:sandeepamuthumal3@gmail.com"
                                         class="text-white font-semibold hover:text-blue-400 transition">
-                                        sandeepa@example.com
+                                        sandeepamuthumal3@gmail.com
                                     </a>
                                 </div>
                             </div>
@@ -975,9 +866,9 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-400 text-sm">GitHub</p>
-                                    <a href="https://github.com/sandeepa" target="_blank"
+                                    <a href="https://github.com/sandeepamuthumal" target="_blank"
                                         class="text-white font-semibold hover:text-blue-400 transition">
-                                        github.com/sandeepa
+                                        github.com/sandeepamuthumal
                                     </a>
                                 </div>
                             </div>
@@ -997,6 +888,7 @@
 
                     <div>
                         <form class="space-y-6" id="contactForm">
+                            @csrf
                             <div>
                                 <label class="block text-slate-300 font-medium mb-2">Your Name</label>
                                 <input type="text" name="name" required
@@ -1034,7 +926,7 @@
                     reliable software systems. Let's talk about how I can contribute to your team.
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
-                    <a href="/files/resume.pdf" download class="neon-button text-white inline-block">
+                    <a href="/files/Sandeepa Muthumal_CV.pdf" download class="neon-button text-white inline-block">
                         <i class="fas fa-download mr-2"></i>Download Resume
                     </a>
                     <a href="https://calendly.com/sandeepa" target="_blank"
@@ -1081,18 +973,18 @@
                             class="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-blue-500 hover:text-white transition hover-lift">
                             <i class="fab fa-linkedin"></i>
                         </a>
-                        <a href="https://github.com/sandeepa" target="_blank"
+                        <a href="https://github.com/sandeepamuthumal" target="_blank"
                             class="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-blue-500 hover:text-white transition hover-lift">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:sandeepa@example.com"
+                        <a href="mailto:sandeepamuthumal3@gmail.com"
                             class="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-blue-500 hover:text-white transition hover-lift">
                             <i class="fas fa-envelope"></i>
                         </a>
-                        <a href="https://twitter.com/sandeepa" target="_blank"
+                        {{-- <a href="https://twitter.com/sandeepa" target="_blank"
                             class="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-blue-500 hover:text-white transition hover-lift">
                             <i class="fab fa-twitter"></i>
-                        </a>
+                        </a> --}}
                     </div>
                     <p class="text-slate-400 text-sm">
                         <i class="fas fa-briefcase mr-2"></i>Available for internship opportunities
@@ -1233,21 +1125,32 @@
             document.getElementById('tab-' + tabName).classList.add('active');
         }
 
-        // Contact Form
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
             const button = e.target.querySelector('button[type="submit"]');
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
             button.disabled = true;
 
-            // Simulate form submission
-            setTimeout(() => {
-                alert('Thank you! Your message has been sent successfully.');
-                e.target.reset();
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }, 1500);
+            fetch("{{ route('contact.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: new FormData(this)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        this.reset();
+                    }
+                })
+                .catch(() => alert('Something went wrong'));
         });
     </script>
 

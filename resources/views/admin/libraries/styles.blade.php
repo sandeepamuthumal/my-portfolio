@@ -33,4 +33,4 @@
     }
  </style>
 
- @stack('css')
+ @stack('styles')

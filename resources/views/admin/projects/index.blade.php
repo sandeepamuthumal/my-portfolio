@@ -110,7 +110,6 @@
                         <thead class="table-light">
                             <tr>
                                 <th width="50">#</th>
-                                <th width="100">Image</th>
                                 <th>Project</th>
                                 <th width="120">Type</th>
                                 <th width="120">Status</th>
@@ -126,10 +125,6 @@
                                             <span class="drag-handle d-none"><i class="fas fa-grip-vertical"></i></span>
                                             <span class="badge badge-order bg-primary">{{ $project->order }}</span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <img src="{{ asset('storage/' . $project->primary_image) }}"
-                                            alt="{{ $project->title }}" class="project-thumbnail">
                                     </td>
                                     <td>
                                         <strong class="d-block">{{ $project->title }}</strong>

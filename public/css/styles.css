@@ -236,51 +236,63 @@ body {
 /* Project Card Enhanced */
 
 .project-card {
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform-style: preserve-3d;
     position: relative;
     overflow: hidden;
+    border-radius: 16px;
+    transition: transform 0.45s ease, box-shadow 0.45s ease, background-color 0.45s ease;
+    will-change: transform;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.25);
+    cursor: pointer;
 }
 
 .project-card::before {
     content: '';
     position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, #3B82F6, #0EA5E9, #06B6D4);
+    inset: 0;
     border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #3B82F6, #0EA5E9, #06B6D4);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
 }
 
 .project-card:hover::before {
     opacity: 1;
 }
 
-.project-card:hover {
-    transform: translateY(-12px) rotateX(2deg);
-    box-shadow: 0 35px 90px rgba(59, 130, 246, 0.4);
-}
-
 .project-card-image {
-    position: relative;
+    height: 220px;
     overflow: hidden;
     border-radius: 12px;
-    height: 220px;
 }
 
 .project-card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.6s ease;
 }
 
 .project-card:hover .project-card-image img {
-    transform: scale(1.1) rotate(1deg);
+    transform: scale(1.06);
+}
+
+.project-card p,
+.project-card h3 {
+    transition: color 0.35s ease;
+}
+
+.project-card:hover p {
+    color: #E5E7EB;
+    /* slate-200 */
 }
 
 
@@ -288,10 +300,40 @@ body {
 
 .status-badge {
     padding: 4px 12px;
-    border-radius: 12px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
+
+
+/* Completed */
+
+.status-completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+
+/* Ongoing */
+
+.status-ongoing {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3B82F6;
+}
+
+
+/* Modifying */
+
+.status-modifying {
+    background: rgba(251, 191, 36, 0.18);
+    color: #FBBF24;
+}
+
+
+/* Live */
 
 .status-live {
     background: rgba(16, 185, 129, 0.2);

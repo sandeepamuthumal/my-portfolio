@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Create New Project')
+@section('title', 'Create Project')
 
 @push('styles')
     <style>

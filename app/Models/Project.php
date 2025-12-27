@@ -21,7 +21,8 @@ class Project extends Model
         'video_link',
         'technologies',
         'order',
-        'is_published'
+        'is_published',
+        'url'
     ];
 
     protected $casts = [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\ProjectImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -15,9 +16,9 @@ class ProjectController extends Controller
 
         if ($request->has('search') && $request->search) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('subtitle', 'like', "%{$search}%");
+                    ->orWhere('subtitle', 'like', "%{$search}%");
             });
         }
 
@@ -62,6 +63,8 @@ class ProjectController extends Controller
             $validated['primary_image'] = $this->uploadImage($request->file('primary_image'), 'projects/primary');
         }
 
+        $validated['url'] = Str::slug($validated['title']);
+
         $project = Project::create($validated);
 
         if ($request->hasFile('secondary_images')) {
@@ -105,10 +108,16 @@ class ProjectController extends Controller
 
         if ($request->hasFile('primary_image')) {
             if ($project->primary_image) {
-                Storage::disk('public')->delete($project->primary_image);
+                $fullPath = public_path($project->primary_image);
+
+                if (File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
             }
             $validated['primary_image'] = $this->uploadImage($request->file('primary_image'), 'projects/primary');
         }
+
+        $validated['url'] = Str::slug($validated['title']);
 
         $project->update($validated);
 
@@ -116,7 +125,10 @@ class ProjectController extends Controller
             foreach ($request->remove_images as $imageId) {
                 $image = ProjectImage::find($imageId);
                 if ($image && $image->project_id == $project->id) {
-                    Storage::disk('public')->delete($image->image_path);
+                    $fullPath = public_path($image->image_path);
+                    if (File::exists($fullPath)) {
+                        File::delete($fullPath);
+                    }
                     $image->delete();
                 }
             }
@@ -141,11 +153,19 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         if ($project->primary_image) {
-            Storage::disk('public')->delete($project->primary_image);
+            $fullPath = public_path($project->primary_image);
+
+            if (File::exists($fullPath)) {
+                File::delete($fullPath);
+            }
         }
 
         foreach ($project->images as $image) {
-            Storage::disk('public')->delete($image->image_path);
+            $fullPath = public_path($image->image_path);
+
+            if (File::exists($fullPath)) {
+                File::delete($fullPath);
+            }
             $image->delete();
         }
 
@@ -172,7 +192,15 @@ class ProjectController extends Controller
 
     private function uploadImage($file, $path)
     {
+        $directory = public_path('uploads/' . $path);
+
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
         $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-        return $file->storeAs($path, $filename, 'public');
+        $file->move($directory, $filename);
+
+        return 'uploads/' . $path . '/' . $filename;
     }
 }
