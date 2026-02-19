@@ -190,6 +190,94 @@ class ProjectController extends Controller
         return response()->json(['success' => true, 'message' => 'Order updated successfully!']);
     }
 
+    public function getAllProjects(Request $request)
+    {
+        $query = Project::with('images')
+            ->where('is_published', true)
+            ->ordered();
+
+        // Filter by type
+        if ($request->has('type') && in_array($request->type, ['personal', 'company'])) {
+            $query->where('project_type', $request->type);
+        }
+
+        // Filter by status
+        if ($request->has('status') && in_array($request->status, ['completed', 'ongoing', 'modifying'])) {
+            $query->where('status', $request->status);
+        }
+
+        // Search
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('subtitle', 'like', "%{$search}%")
+                  ->orWhere('technologies', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by technology
+        if ($request->has('tech') && $request->tech) {
+            $query->where('technologies', 'like', "%{$request->tech}%");
+        }
+
+        $projects = $query->paginate(12);
+
+        // Get all unique technologies for filter
+        $all_technologies = Project::where('is_published', true)
+            ->pluck('technologies')
+            ->flatMap(function($tech) {
+                return explode(',', $tech);
+            })
+            ->map(function($tech) {
+                return trim($tech);
+            })
+            ->unique()
+            ->filter()
+            ->sort()
+            ->values();
+
+        // Stats
+        $stats = [
+            'total' => Project::where('is_published', true)->count(),
+            'personal' => Project::where('is_published', true)->where('project_type', 'personal')->count(),
+            'company' => Project::where('is_published', true)->where('project_type', 'company')->count(),
+            'completed' => Project::where('is_published', true)->where('status', 'completed')->count(),
+        ];
+
+        return view('projects.index', compact('projects', 'all_technologies', 'stats'));
+    }
+
+    public function showProject($url)
+    {
+        $project = Project::with('images')
+            ->where('is_published', true)
+            ->where('url', $url)
+            ->firstOrFail();
+
+        // Get related projects (same type, excluding current)
+        $related_projects = Project::with('images')
+            ->where('is_published', true)
+            ->where('project_type', $project->project_type)
+            ->where('id', '!=', $project->id)
+            ->ordered()
+            ->take(3)
+            ->get();
+
+        // Get next and previous projects
+        $next_project = Project::where('is_published', true)
+            ->where('order', '>', $project->order)
+            ->orderBy('order', 'asc')
+            ->first();
+
+        $previous_project = Project::where('is_published', true)
+            ->where('order', '<', $project->order)
+            ->orderBy('order', 'desc')
+            ->first();
+
+        return view('projects.show', compact('project', 'related_projects', 'next_project', 'previous_project'));
+    }
+
     private function uploadImage($file, $path)
     {
         $directory = public_path('uploads/' . $path);

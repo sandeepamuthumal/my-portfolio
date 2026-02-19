@@ -435,8 +435,8 @@
             <div id="content-personal" class="tab-content">
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach ($personal_projects as $project)
-                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
-
+                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in"
+                            data-aos-delay="{{ $loop->index * 50 }}">
                             <!-- Image -->
                             <div class="project-card-image">
                                 <img src="{{ asset($project->primary_image) }}" alt="{{ $project->title }}"
@@ -444,10 +444,9 @@
                             </div>
 
                             <div class="p-6">
-
                                 <!-- Header -->
                                 <div class="flex items-start justify-between mb-3">
-                                    <div>
+                                    <div class="flex-1">
                                         <h3 class="text-xl font-bold text-white mb-1">
                                             {{ $project->title }}
                                         </h3>
@@ -457,7 +456,7 @@
                                     </div>
 
                                     {{-- Status --}}
-                                    <span class="status-badge {{ $statusMap[$project->status]['class'] }}">
+                                    <span class="status-badge {{ $statusMap[$project->status]['class'] }} ml-2">
                                         <i class="fas {{ $statusMap[$project->status]['icon'] }}"></i>
                                         {{ $statusMap[$project->status]['label'] }}
                                     </span>
@@ -465,45 +464,36 @@
 
                                 <!-- Description -->
                                 <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                    {!! strip_tags($project->description) !!}
+                                    {!! Str::limit(strip_tags($project->description), 100) !!}
                                 </p>
-
-                                <!-- Project Type -->
-                                <div class="mb-3">
-                                    <span class="text-xs text-slate-500 font-mono">
-                                        Personal Project
-                                    </span>
-                                </div>
 
                                 <!-- Technologies -->
                                 <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach (explode(',', $project->technologies) as $tech)
+                                    @foreach (array_slice(explode(',', $project->technologies), 0, 3) as $tech)
                                         <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">
                                             {{ trim($tech) }}
                                         </span>
                                     @endforeach
+                                    @if (count(explode(',', $project->technologies)) > 3)
+                                        <span class="bg-slate-700 text-slate-300 px-2 py-1 rounded text-xs">
+                                            +{{ count(explode(',', $project->technologies)) - 3 }} more
+                                        </span>
+                                    @endif
                                 </div>
 
                                 <!-- Actions -->
                                 <div class="flex items-center justify-between pt-4 border-t border-slate-700">
                                     <span class="text-slate-400 text-sm">
-                                        <i class="fas fa-code mr-1"></i> Personal
+                                        <i
+                                            class="fas {{ $project->project_type == 'personal' ? 'fa-user' : 'fa-building' }} mr-1"></i>
+                                        {{ ucfirst($project->project_type) }}
                                     </span>
 
-                                    <div class="flex gap-2">
-                                        @if ($project->live_link)
-                                            <a href="{{ $project->live_link }}" target="_blank"
-                                                class="text-blue-400 hover:text-blue-300">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        @endif
-
-                                        @if ($project->github_link)
-                                            <a href="{{ $project->github_link }}" target="_blank"
-                                                class="text-blue-400 hover:text-blue-300">
-                                                <i class="fab fa-github"></i>
-                                            </a>
-                                        @endif
+                                    <div class="flex gap-3">
+                                        <a href="{{ route('projects.show', $project->url) }}"
+                                            class="text-blue-400 hover:text-blue-300 font-medium text-sm">
+                                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -517,86 +507,74 @@
             <div id="content-company" class="tab-content hidden">
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach ($company_projects as $project)
-                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in">
-
-                            <!-- Image -->
-                            <div class="project-card-image">
-                                <img src="{{ asset($project->primary_image) }}" alt="{{ $project->title }}"
+                        <div class="glass-card rounded-2xl overflow-hidden project-card" data-aos="zoom-in" data-aos-delay="{{ $loop->index * 50 }}">
+                        <!-- Image -->
+                        <div class="project-card-image">
+                            <img src="{{ asset($project->primary_image) }}" alt="{{ $project->title }}"
                                     loading="lazy">
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Header -->
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h3 class="text-xl font-bold text-white mb-1">
+                                        {{ $project->title }}
+                                    </h3>
+                                    <p class="text-sm text-slate-400">
+                                        {{ $project->subtitle }}
+                                    </p>
+                                </div>
+
+                                {{-- Status --}}
+                                <span class="status-badge {{ $statusMap[$project->status]['class'] }} ml-2">
+                                    <i class="fas {{ $statusMap[$project->status]['icon'] }}"></i>
+                                    {{ $statusMap[$project->status]['label'] }}
+                                </span>
                             </div>
 
-                            <div class="p-6">
+                            <!-- Description -->
+                            <p class="text-slate-400 text-sm mb-4 line-clamp-2">
+                                {!! Str::limit(strip_tags($project->description), 100) !!}
+                            </p>
 
-                                <!-- Header -->
-                                <div class="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h3 class="text-xl font-bold text-white mb-1">
-                                            {{ $project->title }}
-                                        </h3>
-                                        <p class="text-sm text-slate-400">
-                                            {{ $project->subtitle }}
-                                        </p>
-                                    </div>
-
-                                    {{-- Status --}}
-                                    <span class="status-badge {{ $statusMap[$project->status]['class'] }}">
-                                        <i class="fas {{ $statusMap[$project->status]['icon'] }}"></i>
-                                        {{ $statusMap[$project->status]['label'] }}
+                            <!-- Technologies -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                @foreach(array_slice(explode(',', $project->technologies), 0, 3) as $tech)
+                                    <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">
+                                        {{ trim($tech) }}
                                     </span>
-                                </div>
-
-                                <!-- Description -->
-                                <p class="text-slate-400 text-sm mb-4 line-clamp-2">
-                                    {!! strip_tags($project->description) !!}
-                                </p>
-
-                                <!-- Project Type -->
-                                <div class="mb-3">
-                                    <span class="text-xs text-slate-500 font-mono">
-                                        Personal Project
+                                @endforeach
+                                @if(count(explode(',', $project->technologies)) > 3)
+                                    <span class="bg-slate-700 text-slate-300 px-2 py-1 rounded text-xs">
+                                        +{{ count(explode(',', $project->technologies)) - 3 }} more
                                     </span>
-                                </div>
+                                @endif
+                            </div>
 
-                                <!-- Technologies -->
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach (explode(',', $project->technologies) as $tech)
-                                        <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-mono">
-                                            {{ trim($tech) }}
-                                        </span>
-                                    @endforeach
-                                </div>
+                            <!-- Actions -->
+                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+                                <span class="text-slate-400 text-sm">
+                                    <i class="fas {{ $project->project_type == 'personal' ? 'fa-user' : 'fa-building' }} mr-1"></i>
+                                    {{ ucfirst($project->project_type) }}
+                                </span>
 
-                                <!-- Actions -->
-                                <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                    <span class="text-slate-400 text-sm">
-                                        <i class="fas fa-code mr-1"></i> Company
-                                    </span>
-
-                                    <div class="flex gap-2">
-                                        @if ($project->live_link)
-                                            <a href="{{ $project->live_link }}" target="_blank"
-                                                class="text-blue-400 hover:text-blue-300">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        @endif
-
-                                        @if ($project->github_link)
-                                            <a href="{{ $project->github_link }}" target="_blank"
-                                                class="text-blue-400 hover:text-blue-300">
-                                                <i class="fab fa-github"></i>
-                                            </a>
-                                        @endif
-                                    </div>
+                                <div class="flex gap-3">
+                                    <a href="{{ route('projects.show', $project->url) }}"
+                                       class="text-blue-400 hover:text-blue-300 font-medium text-sm">
+                                        View Details <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     @endforeach
                 </div>
             </div>
 
             <!-- View All Projects Button -->
             <div class="text-center mt-3" data-aos="fade-up">
-                <a href="projects.html" class="neon-button text-white inline-block">
+                <a href="{{ route('projects.all') }}" class="neon-button text-white inline-block">
                     <i class="fas fa-th mr-2"></i>View All Projects
                 </a>
             </div>
@@ -790,7 +768,7 @@
                             NS
                         </div>
                         <div>
-                            <h4 class="font-bold text-white">Kavindu </h4>
+                            <h4 class="font-bold text-white">Kavindu Shehan</h4>
                             <p class="text-slate-400 text-sm">Junior Developer, SCITS</p>
                         </div>
                     </div>

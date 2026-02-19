@@ -10,6 +10,11 @@ class HomeController extends Controller
 {
     public function index()
     {
+        \Artisan::call('config:cache');
+        \Artisan::call('view:clear');
+        \Artisan::call('route:clear');
+        \Artisan::call('config:clear');
+
         $company_projects = Project::where('project_type', 'company')
             ->Published()
             ->Ordered()
